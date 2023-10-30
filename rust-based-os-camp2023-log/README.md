@@ -1,6 +1,53 @@
 ## 2023 年秋季开源操作系统训练营
 
 [👉🏻课程仓库](https://github.com/LearningOS/rust-based-os-comp2023)
+[👉🏻Tutorial-Book](https://rcore-os.cn/rCore-Tutorial-Book-v3)
+[👉🏻Tutorial-Guide](http://learningos.cn/rCore-Tutorial-Guide-2023A)
+
+### 第二阶段
+
+#### 第二周 (10/30 ~ 11/5)
+
+##### 10/30
+梳理了一下第三章里任务执行和切换的流程, 能帮助我理清一些思路, 不过可能有错...  
+
+**第一个应用开始运行前, 此时处于 S 态**   
+
+1. `TASK_MANAGER` 初始化, 对每个任务调用 `goto_restore(init_app_cx(i))`, 在每个任务的内核栈上推入一个用于启动应用的 Trap 上下文, 将任务上下文的 `ra` 设置为 `__restore` 的地址, `sp` 为本任务内核栈的栈顶.  
+   
+2. `run_first_task`: 构造一个空的任务上下文，调用 `__switch` 切换到第一个任务的上下文.  
+   
+3. `__switch`:  `ra` 和 `sp` 被恢复, 函数返回后即进入 `__restore`.  
+   
+4. `__restore`: 此时 `a0` 为上一个任务上下文 (这里为空上下文) 的地址, `sscratch` 的值未知. 在加载 3 个 CSR 后, `sscratch` 被设置为用户栈栈顶, `sepc` 为应用入口地址; 接着再恢复剩下的寄存器, 最后交换 `sp` 和 `sscratch`, `sp` 指向用户栈, `sscratch` 指向内核栈, `sret` 后应用开始运行.  
+
+**第一个应用开始运行, 此时处于 U 态**  
+**触发时钟中断, 调度应用 A -> 任务 B, 此时处于 S 态**  
+
+5. `__alltraps`: 现在 `sp` 指向 A 内核栈, `sscratch` 指向 A 用户栈. 将当前 A 用户栈上的情况等 (x1~x3, x5~x31, sstatus, sepc, sscratch) 悉数保存到 A 内核栈.  
+6. `trap_handler`: 设置 A 的状态为 `Ready`, 一路调用到 `run_next_task`.  
+   
+7. `run_next_task`: 设置 B 的状态为 `Running`, 提取出 A 和 B 的任务上下文所在地址, 调用 `__switch`.  
+   
+8. `__switch`: 将 A 内核栈的信息等 (sp, ra, s0~s11) 保存到 A 的上下文中, 加载 B 的上下文中的信息, 此时 `sp` 已指向 B 内核栈, `ra` 为 `__restore` (由于 B 也是初次加载, 所以会进入 `__restore`).  
+   
+9. `__restore`: 加载 3 个 CSR 后, 已变更为 B 内核栈上的 Trap 上下文信息, `sret` 后任务 B 开始运行.  
+    > 对于 A 和 B 都被调度过的情况, 假设此时 A -> B, 那么 B 的上下文中存储的 `ra` 是 `suspend_current_and_run_next` 的最后一条指令 (我不确定, 但似乎是这样). 观察上面的调用链, `alltraps` -> `trap_handler` 时使用的是 `call` 伪指令, `ra` 被修改为 `__restore` 的入口. 后续在 `trap_handler` 中调用的 Rust 函数被编译时会自动将 `ra` 保存入栈, 等 `trap_handler` 结束时, 总会回到 `__restore`.
+
+#### 第一周 (10/23 ~ 10/29)
+
+##### 10/29
+把第三章的实验提交了, 其实还是有些模糊不清的地方.  
+
+##### 10/28
+可能是之前读得太赶了，发现第三章的实验都不太会，于是从头重新仔细读了一下，然后发现一下就做出来了, 不过是用的非常暴力的方法. 明天再写问答题.  
+
+##### 10/26
+看了指导的第三章, 结果发现新版 qemu 有问题, 会输出乱码, 最后还是回到了 WSL...  
+从这里开始和 Tutorial-Book 结合起来看了.
+
+##### 10/25
+看了指导的第零到二章，建立好了实验环境.  
 
 ### 第一阶段
 
