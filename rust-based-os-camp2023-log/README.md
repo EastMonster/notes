@@ -1,8 +1,13 @@
 ## 2023 年秋季开源操作系统训练营
 
+2023 年 10 月 8 日 ~ 2023 年 12 月 3 日
+
 [👉🏻课程仓库](https://github.com/LearningOS/rust-based-os-comp2023)
 [👉🏻Tutorial-Book](https://rcore-os.cn/rCore-Tutorial-Book-v3)
-[👉🏻Tutorial-Guide](http://learningos.cn/rCore-Tutorial-Guide-2023A)
+[👉🏻Tutorial-Guide](http://learningos.cn/rCore-Tutorial-Guide-2023A)  
+
+[📜第二阶段总结](summary-2.md)
+[📜第三阶段总结](summary-3.md)  
 
 ### 第三阶段
 
@@ -40,7 +45,13 @@
 
 ### 第二阶段
 
-#### 后续 (11/6 ~ ?)
+#### 后续 (11/6 ~ 12/5)
+
+##### 12/5
+~~我怎么就拿到证了呢~~  
+犯了个巨蠢的问题, 在嵌套循环里面 `continue` 错地方了😅  
+我打了这么多日志居然都没看出来😡😡😡  
+这下第二阶段彻底完结了🎉🎉🎉
 
 ##### 11/23
 第八章实验调不通, 最后一个样例过不了, 可能是我对银行家算法的理解还是有点问题...  
@@ -82,7 +93,7 @@
 ##### 11/6
 第四章实验已过.  
 
-#### 第二周 (10/30 ~ 11/5?)
+#### 第二周 (10/30 ~ 11/5)
 
 ##### 11/5
 函数补全得差不多了, 但是第五个测例老是过不了, 明天争取做完.  
